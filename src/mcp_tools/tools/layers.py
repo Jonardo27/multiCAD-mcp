@@ -202,7 +202,7 @@ def _info(spec: Dict[str, Any]) -> Dict[str, Any]:
                 "on": adapter.is_layer_on(name),
             }
             try:
-                doc = adapter.get_document()
+                doc = adapter._get_document("layer_info")
                 layer = doc.Layers.Item(name)
                 layer_info["color"] = layer.color
                 layer_info["locked"] = layer.Lock
