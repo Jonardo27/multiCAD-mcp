@@ -240,3 +240,8 @@ Para informar problemas, preguntas o solicitudes de funciones, abre un issue en 
 ---
 
 **¿Necesitas ayuda con la configuración?** Comienza con los pasos de instalación anteriores.
+
+## Cambios de este fork
+
+- **Capas on/off reales**: `turn_layer_off` apaga la capa (`LayerOn = False`) en lugar de congelarla; `turn_layer_on` la enciende y descongela; `is_layer_on` y la info de capas leen `LayerOn` y `Freeze` correctamente.
+- `layers.py`: la info de una capa usa `_get_document()` del adaptador.

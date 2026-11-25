@@ -262,7 +262,7 @@ class LayerMixin:
                         "IsVisible": bool(
                             self._safe_get_property(layer, "LayerOn", True)
                         )
-                        and not bool(self._safe_get_property(layer, "Frozen", False)),
+                        and not bool(self._safe_get_property(layer, "Freeze", False)),
                     }
                     layers_info.append(layer_info)
                 except Exception as e:
@@ -330,7 +330,7 @@ class LayerMixin:
             return False
 
     def turn_layer_on(self, name: str) -> bool:
-        """Make a frozen layer visible by unfreezing it via COM.
+        """Make a layer visible by turning it on and thawing it via COM.
 
         Args:
             name: Name of the layer to turn on.
@@ -343,6 +343,7 @@ class LayerMixin:
             document = self._get_document("turn_layer_on")
 
             layer = document.Layers.Item(name)
+            layer.LayerOn = True
             layer.Freeze = False
             logger.info(f"Turned on layer '{name}'")
             return True
@@ -351,7 +352,7 @@ class LayerMixin:
             return False
 
     def turn_layer_off(self, name: str) -> bool:
-        """Hide a layer by freezing it via COM.
+        """Hide a layer by turning it off (LayerOn), without freezing it, via COM.
 
         Args:
             name: Name of the layer to turn off.
@@ -364,7 +365,7 @@ class LayerMixin:
             document = self._get_document("turn_layer_off")
 
             layer = document.Layers.Item(name)
-            layer.Freeze = True
+            layer.LayerOn = False
             logger.info(f"Turned off layer '{name}'")
             return True
         except Exception as e:
@@ -372,20 +373,20 @@ class LayerMixin:
             return False
 
     def is_layer_on(self, name: str) -> bool:
-        """Check whether a layer is currently visible (not frozen) via COM.
+        """Check whether a layer is currently visible (on and not frozen) via COM.
 
         Args:
             name: Name of the layer to check.
 
         Returns:
-            True if the layer is visible, False if frozen or on error.
+            True if the layer is visible, False if off, frozen or on error.
         """
         try:
             self._validate_connection()
             document = self._get_document("is_layer_on")
 
             layer = document.Layers.Item(name)
-            return not layer.Freeze
+            return bool(layer.LayerOn) and not bool(layer.Freeze)
         except Exception as e:
             logger.error(f"Failed to check layer '{name}' visibility: {e}")
             return False
